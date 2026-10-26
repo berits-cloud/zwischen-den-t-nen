@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zwischen den Tönen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=La+Belle+Aurore&family=PT+Serif:wght@400&display=swap">
+<style>
+/* Aufbau: schmale, ruhige Mitte mit viel Luft. Abwechselnd ein kurzer zentrierter Gedanke
+   und ein Block aus Bild links, handgeschriebener Überschrift und kleinem Text rechts.
+   Zwei Schriften: Handschrift für Überschriften und Nebensätze, eine Serife für alles andere.
+   Drei Größen: Titel, Überschrift, Text. */
+:root{
+  --white:#ffffff;
+  --band:#f8f6f1;
+  --green:#49665a;
+  --green-dark:#2f463c;
+  --ink:#2f3a35;
+  --soft:#5b665f;
+  --line:#d9ddd4;
+  --mist:#dce2d5;
+  --text:'PT Serif',Georgia,serif;
+  --hand:'La Belle Aurore','Segoe Script',cursive;
+  --t-title:clamp(44px,6vw,64px);
+  --t-head:32px;
+  --t-body:15px;
+  --gap:clamp(56px,8vw,96px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--white);color:var(--ink);font-family:var(--text);font-size:var(--t-body);line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+p,blockquote{margin:0}
+img{display:block;width:100%;object-fit:cover}
+h1,h2,h3{margin:0;font-family:var(--hand);font-weight:400;line-height:1.25;color:var(--green);text-wrap:balance}
+h1{font-size:var(--t-title)}
+h2,h3{font-size:var(--t-head)}
+/* Die Handschrift ist von Natur aus kleiner gezeichnet; 1.4em lässt sie so groß wirken wie den Text. */
+.hand{font-family:var(--hand);font-size:1.4em;line-height:1.35;color:var(--green)}
+
+/* Kopf */
+
+.top{position:absolute;z-index:5;top:0;left:0;right:0;color:var(--white);background:linear-gradient(rgba(30,45,38,.6),rgba(30,45,38,0))}
+.top .bar{max-width:1100px;margin-inline:auto;display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:6px 32px;padding:22px 24px 40px}
+.top nav{display:flex;flex-wrap:wrap;justify-content:center;gap:8px 30px}
+.top nav a:hover{color:var(--mist)}
+.brand{font-family:var(--hand);font-size:30px;line-height:1.2;color:var(--green)}
+
+/* zentrierter Gedanke */
+.band{background:var(--band);padding:var(--gap) 24px}
+.center{max-width:480px;margin-inline:auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px}
+.center::before{content:'';width:14px;height:1px;background:var(--soft)}
+
+/* Zettel und Fotos, mit Klebestreifen festgemacht */
+.slip,.print{position:relative;background:#fffdf4;box-shadow:0 10px 18px -12px rgba(47,58,53,.55)}
+.slip{display:inline-block;padding:20px 22px 14px;transform:rotate(-2.5deg)}
+.print{margin:0;padding:9px;transform:rotate(-1.6deg)}
+.slip::before{content:'';position:absolute;z-index:1;top:-12px;left:50%;width:86px;height:24px;margin-left:-43px;background:rgba(216,198,140,.78);transform:rotate(-4deg)}
+.flip .slip{transform:rotate(2deg)}
+/* Zettel so weit nach links, dass sein Text mit der Überschrift bündig steht */
+.block .slip{margin-left:-20px;transform-origin:left center}
+.flip .print{transform:rotate(1.8deg)}
+.flip .slip::before,.flip .print::before{transform:rotate(5deg);left:38%}
+.center .hand{transform:rotate(-2deg)}
+.keys{position:relative;display:flex;gap:2px;height:130px;background:var(--ink);border:2px solid var(--ink);border-radius:2px 2px 6px 6px;overflow:hidden}
+.keys button{border:0;padding:0;cursor:pointer}
+.wkey{flex:1;background:var(--white);border-radius:0 0 4px 4px;transition:background .12s}
+.wkey.first{background:var(--mist)}
+.wkey:hover,.wkey.down{background:#c9d6c8}
+.bkey{position:absolute;top:0;width:4.4%;height:60%;background:var(--ink);border-radius:0 0 3px 3px;z-index:1}
+.bkey.down{background:var(--green)}
+
+/* Block: Bild links, Text rechts */
+.block{max-width:820px;margin-inline:auto;padding:var(--gap) 24px;display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:28px 44px;align-items:start}
+.block.flip>.print{order:2}
+.block img{aspect-ratio:3/2}
+.block .col{display:flex;flex-direction:column;gap:16px;align-items:flex-start}
+.block+.block{padding-top:0}
+
+.btn{display:inline-block;background:var(--band);padding:8px 16px;border:0;font:inherit;color:inherit;cursor:pointer}
+.btn:hover{background:var(--mist)}
+.playrow{display:flex;align-items:center;gap:14px;align-self:stretch}
+.play{flex:none;width:44px;height:44px;border:0;border-radius:50%;background:var(--green);color:var(--white);cursor:pointer;display:grid;place-items:center;transition:background .2s}
+.play:hover{background:var(--green-dark)}
+.play svg{width:15px;height:15px;fill:currentColor}
+.prog{flex:1;height:1px;background:var(--line);position:relative}
+.prog i{position:absolute;left:0;top:-3px;width:7px;height:7px;margin-left:-3px;border-radius:50%;background:var(--green)}
+/* Leiste zum Verstellen: größere unsichtbare Klickfläche, Punkt wird beim Darüberfahren etwas größer */
+.prog{cursor:pointer;touch-action:none}
+.prog::after{content:'';position:absolute;left:0;right:0;top:-14px;bottom:-14px}
+.prog i{transition:transform .15s}
+.prog:hover i,.prog:focus-visible i{transform:scale(1.6)}
+.msg:empty{display:none}
+.soft{color:var(--soft)}
+
+/* Anfang: ein großes Foto, Titel und Stück zum Anhören liegen unten darauf */
+.big{position:relative;min-height:min(78vh,680px);display:flex;align-items:flex-end;color:var(--white)}
+.big>img{position:absolute;inset:0;height:100%}
+.big::after{content:'';position:absolute;inset:0;background:linear-gradient(rgba(30,45,38,.08) 30%,rgba(30,45,38,.8))}
+.big .in{position:relative;z-index:1;width:100%;max-width:1100px;margin-inline:auto;padding:clamp(28px,5vw,56px) 24px;display:flex;flex-wrap:wrap;gap:28px 48px;align-items:flex-end;justify-content:space-between}
+.big .col{flex:1 1 360px;max-width:520px;display:flex;flex-direction:column;gap:16px}
+.big h1{color:var(--white)}
+/* Zettel klebt über der Unterkante des Fotos und ragt in den nächsten Abschnitt */
+.big .slip{position:absolute;z-index:2;right:clamp(24px,8%,110px);bottom:-30px;transform:rotate(3deg)}
+.big+*{padding-top:calc(var(--gap) + 20px)}
+.big .slip{max-width:min(300px,72%)}
+@media(max-width:899px){
+  .big .in{padding-bottom:96px}
+  .big .slip{right:auto;left:50%;transform:translateX(-50%) rotate(2deg);width:max-content;padding:16px 16px 10px}
+  .top .bar{justify-content:center}
+}
+.big .play{width:60px;height:60px;background:var(--white);color:var(--green)}
+.big .play:hover{background:var(--mist)}
+.big .now{flex:1;min-width:0}
+.big .prog{margin-top:10px;background:rgba(255,255,255,.5)}
+.big .prog i{background:var(--white)}
+
+/* Gefällt mir und Kommentare, bewusst unauffällig */
+.fb{align-self:stretch;display:flex;flex-wrap:wrap;align-items:center;gap:4px 20px;color:var(--soft)}
+.fb button{background:none;border:0;padding:6px 0;font:inherit;color:inherit;cursor:pointer;display:inline-flex;align-items:center;gap:7px}
+.fb button:hover,.fb .liked{color:var(--green)}
+.fb svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linejoin:round}
+.fb .liked svg{fill:currentColor}
+.cm{flex-basis:100%;display:flex;flex-direction:column;gap:12px;padding-top:6px}
+.cm[hidden]{display:none}
+.cm ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.cm ul:empty{display:none}
+.cm li{border-left:1px solid var(--line);padding-left:12px;color:var(--ink)}
+.cm form{display:flex;gap:14px;align-items:center}
+.cm input{flex:1;min-width:0;border:0;border-bottom:1px solid var(--line);border-radius:0;background:none;font:inherit;color:var(--ink);padding:6px 0}
+.cm input:focus{outline:0;border-bottom-color:var(--green)}
+
+/* kleine, wie von Hand gezeichnete Noten am Rand */
+.band{position:relative}
+.doodle{position:absolute;height:34px;width:auto;color:var(--green);opacity:.45;pointer-events:none}
+.doodle path{fill:none;stroke:currentColor;stroke-width:1.3;stroke-linecap:round;stroke-linejoin:round}
+.doodle.d1{left:max(22px,calc(50% - 330px));bottom:16px;transform:rotate(-12deg)}
+.doodle.d2{right:max(22px,calc(50% - 330px));top:18px;transform:rotate(9deg);color:var(--mist);opacity:.6}
+.doodle.d3{left:max(22px,calc(50% - 330px));top:18px;transform:rotate(-7deg)}
+
+main{overflow-x:clip}
+/* Abschnitte gleiten beim Scrollen sanft herein: von links, rechts oder unten */
+.rv{opacity:0;transition:opacity 1s ease,translate 1s cubic-bezier(.2,.7,.2,1)}
+.rv.l{translate:-48px 0}
+.rv.r{translate:48px 0}
+.rv.u{translate:0 36px}
+.rv.in{opacity:1;translate:0 0}
+.doodle.rv{transition-delay:.35s}
+.doodle.rv.in{opacity:.45}
+.doodle.d2.rv.in{opacity:.6}
+
+/* Gedanken zum Durchblättern */
+.slider{position:relative;max-width:620px;margin:26px auto 0;padding-inline:44px;text-align:center;display:flex;flex-direction:column;gap:14px}
+.slides{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;scrollbar-width:none}
+.slides::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;padding:6px 10px;min-height:190px}
+.slide .note,.slide.written .hand{font-size:26px}
+.slide .note{transform:rotate(-2deg)}
+.slide.photo .print{width:min(250px,82%)}
+.slide.photo img{aspect-ratio:4/3}
+.ctrl{display:flex;justify-content:center;align-items:center;gap:22px}
+.ctrl button{position:absolute;top:78px;width:44px;height:44px;border:0;background:transparent;color:inherit;opacity:.55;cursor:pointer;display:grid;place-items:center;transition:opacity .2s}
+#prev{left:0}
+#next{right:0}
+.ctrl button:hover{opacity:1}
+.ctrl button:disabled{opacity:.15;cursor:default}
+.ctrl svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.slider>p{color:var(--mist)}
+
+/* Grün */
+.green{background:var(--green);color:var(--white)}
+.green h2,.green .hand{color:var(--white)}
+.green .center::before{background:var(--mist)}
+.green .btn{background:transparent;border-bottom:1px solid var(--mist);padding:0 0 2px}
+
+@media(max-width:680px){
+  .block{grid-template-columns:minmax(0,1fr)}
+  .block.flip>.print{order:0}
+  .block .slip{margin-left:0;align-self:center;transform-origin:center}
+  /* am Handy ausgeblendet */
+  .nophone{display:none}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top"><div class="bar">
+  <nav aria-label="Hauptnavigation"><a href="#musik">Musik</a><a href="#gedanken">Gedanken</a><a href="#ueber">Über mich</a></nav>
+</div></header>
+
+<main id="start">
+<section class="big track">
+  <img src="https://images.unsplash.com/photo-1520523839897-bd0b52f945a0?auto=format&fit=crop&w=2000&q=85" alt="Ein Klavier im hellen, natürlichen Licht">
+  <div class="in">
+    <div class="col">
+      <h1>Was in mir klingt.</h1>
+      <p>Jeder Mensch hat eine eigene Melodie. Die meisten bleiben leise, weil der Alltag lauter ist. Hier spiele ich meine – und vielleicht macht sie dir Mut, auch deine zu spielen. Zum Anhören, Lesen und Verweilen.</p>
+      <p class="hand nophone" style="font-size:26px;color:var(--white)">Hast du auch etwas, das du der Welt zeigen möchtest?</p>
+      <div class="playrow">
+        <button class="play" aria-label="Ein Abend in Österreich abspielen" data-audio="audio/ein-abend-in-oesterreich.m4a" data-start="13.6"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <div class="now"><p>Zum Reinhören: Ein Abend in Österreich</p><div class="prog"><i></i></div></div>
+      </div>
+      <p class="msg" aria-live="polite"></p>
+    </div>
+    <p class="hand slip">manchmal beginnt alles mit einem Ton</p>
+  </div>
+</section>
+
+<section class="band" id="musik" style="padding-top:calc(var(--gap) + 20px)"><svg class="doodle d1" viewBox="0 0 26 36" aria-hidden="true"><path d="M10 31c-3.2 1.3-6.4-.6-5.6-3.6s4.9-4.3 8-3.1 3.4 5.3-2.4 6.7z"/><path d="M13.6 26.5C13.9 18.5 13 10.5 13.7 3.2"/><path d="M13.7 3.2c3.6 3.4 8.6 5 6.3 11.6"/></svg><div class="center">
+  <h2>Hör mal, was da ist.</h2>
+  <p>Manche meiner Stücke begleiten mich über Jahre, andere entstehen ganz spontan aus einem Moment heraus. So unterschiedlich sie auch sind, sie alle haben eines gemeinsam: meine Leidenschaft für die Musik und den Wunsch, Gefühle in Melodien auszudrücken.
+
+    Mit dieser Seite möchte ich meine Musik mit dir teilen. Weil ich glaube, dass schöne Dinge noch schöner werden, wenn man sie teilt. Ich finde, wir sollten unsere Leidenschaften viel öfter nach außen tragen, zeigen, was uns begeistert, und andere daran teilhaben lassen. Denn wer weiß, wen wir damit berühren, inspirieren oder vielleicht sogar dazu ermutigen, die eigene Leidenschaft ebenfalls mit der Welt zu teilen..</p>
+</div></section>
+
+<section class="block flip track">
+  <figure class="print"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?auto=format&fit=crop&w=1000&q=80" alt="Morgenlicht über einer grünen Landschaft"></figure>
+  <div class="col">
+    <h3>Ein Abend in Österreich</h3>
+    <p class="hand slip">Manchmal beginnt etwas Schönes, bevor man überhaupt weiß, wonach man sucht.</p>
+    <div class="playrow"><button class="play" aria-label="Ein Abend in Österreich abspielen" data-audio="audio/ein-abend-in-oesterreich.m4a" data-start="13.6"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button><div class="prog"><i></i></div></div>
+    <p class="soft msg" aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="block track">
+  <figure class="print"><img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1000&q=80" alt="Grüner Waldweg im weichen Tageslicht"></figure>
+  <div class="col">
+    <h3>Im Wald</h3>
+    <p>In Arbeit. Ein paar Töne zwischen den Bäumen.</p>
+    <div class="playrow"><button class="play" aria-label="Im Wald abspielen" data-audio="audio/ImWald.m4a"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button><div class="prog"><i></i></div></div>
+    <p class="soft msg" aria-live="polite"></p>
+  </div>
+</section>
+
+<section class="band green" id="gedanken"><svg class="doodle d2" viewBox="0 0 44 38" aria-hidden="true"><path d="M9 33c-3 1.2-6.2-.5-5.5-3.3s4.7-4.1 7.7-3 3.3 5-2.2 6.3z"/><path d="M31 29c-3 1.2-6.2-.5-5.5-3.3s4.7-4.1 7.7-3 3.3 5-2.2 6.3z"/><path d="M12.3 28.6C12.6 21 12 14 12.5 7.6"/><path d="M34.4 24.6C34.7 17 34.1 10 34.5 3.8"/><path d="M12.5 7.6C19.5 5.4 27.5 5.6 34.5 3.8M12.6 10.4c7-2 15-1.8 21.8-3.6"/></svg><div class="center">
+  <h2>Ein bisschen mehr dem Leben zuhören. Meine Gedanken.</h2>
+</div>
+<div class="slider">
+  <div class="slides" id="slides" tabindex="0" aria-label="Gedanken zum Durchblättern">
+    <article class="slide">
+      <p>Ein Stück ist für mich fertig, wenn ich beim Spielen aufhöre, darüber nachzudenken. Bis dahin bleibt es einfach eine Weile bei mir, und das ist in Ordnung.</p>
+      <p class="hand note">notiert nach einem langen Abend am Klavier</p>
+    </article>
+    <article class="slide">
+      <p>Wenn ich draußen unterwegs bin, sortiert sich manches von selbst. Ein Weg, ein Lichtfleck zwischen den Blättern, ein Gedanke, der plötzlich bleibt. Nicht alles muss gleich ein Ziel haben.</p>
+      <p class="hand note">Diesen Gedanken nehme ich mit.</p>
+    </article>
+    <article class="slide photo">
+      <figure class="print" style="transform:rotate(-2deg)"><img src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=800&q=80" alt="Ein grüner Wald mit Licht zwischen den Bäumen"></figure>
+      <p class="hand note">ein Lichtfleck zwischen den Blättern</p>
+    </article>
+    <article class="slide written">
+      <p class="hand">Vielleicht geht es nicht immer darum, irgendwo anzukommen. Manchmal reicht es, etwas zu entdecken.</p>
+    </article>
+    <article class="slide photo">
+      <figure class="print" style="transform:rotate(2deg)"><img src="https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=800&q=80" alt="Grüner Waldweg im weichen Tageslicht"></figure>
+      <p class="hand note">der Weg, auf dem mir das meiste einfällt</p>
+    </article>
+    <article class="slide written">
+      <p class="hand">Nicht jeder Tag braucht eine Melodie. Aber die meisten werden besser mit einer.</p>
+    </article>
+    <article class="slide written">
+      <p class="hand" style="font-size:var(--t-head)">Wann hast du zuletzt einfach nur zugehört?</p>
+    </article>
+    <article class="slide">
+      <p>Die besten Gespräche fangen oft mit einer Frage an, auf die keiner eine Antwort hat. Man geht trotzdem mit mehr nach Hause, als man mitgebracht hat.</p>
+      <p class="hand note">Das merke ich mir.</p>
+    </article>
+  </div>
+  <div class="ctrl">
+    <button type="button" id="prev" aria-label="Vorheriger Gedanke"><svg viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6"/></svg></button>
+    <span id="count" aria-live="polite">1 / 8</span>
+    <button type="button" id="next" aria-label="Nächster Gedanke"><svg viewBox="0 0 24 24"><path d="M10 6l6 6-6 6"/></svg></button>
+  </div>
+</div>
+</section>
+
+<section class="band" id="ueber"><svg class="doodle d3" viewBox="0 0 44 38" aria-hidden="true"><path d="M9 33c-3 1.2-6.2-.5-5.5-3.3s4.7-4.1 7.7-3 3.3 5-2.2 6.3z"/><path d="M31 29c-3 1.2-6.2-.5-5.5-3.3s4.7-4.1 7.7-3 3.3 5-2.2 6.3z"/><path d="M12.3 28.6C12.6 21 12 14 12.5 7.6"/><path d="M34.4 24.6C34.7 17 34.1 10 34.5 3.8"/><path d="M12.5 7.6C19.5 5.4 27.5 5.6 34.5 3.8M12.6 10.4c7-2 15-1.8 21.8-3.6"/></svg><div class="center">
+    <h2>Was mich zum Klingen bringt.</h2>
+    <!-- Foto von Pascal: liegt im Ordner "bilder" neben dieser Seite -->
+    <figure class="print" style="width:min(260px,80%);margin-block:10px 14px;padding-bottom:6px">
+      <!-- Zoom: scale(1.4) = 40 % näher ran. transform-origin legt fest, wohin gezoomt wird:
+           50% 50% = Mitte, 50% 30% = etwas weiter oben, 30% 50% = etwas weiter links -->
+      <div style="overflow:hidden;aspect-ratio:1">
+        <img src="bilder/IMG_2060.JPG" alt="Pascal" style="height:100%;transform:scale(1.4);transform-origin:50% 50%">
+      </div>
+      <figcaption class="hand" style="padding-top:6px">Manches lässt sich leichter spielen als sagen.</figcaption>
+    </figure>
+    <p>Vielleicht hast du dich gefragt, wer hinter diesen Melodien steckt.</p>
+    <p>Ich habe mich bewusst dafür entschieden, das nicht gleich zu erzählen. Denn manchmal sagen die Dinge, die wir erschaffen, mehr über uns aus als alles, was wir über uns selbst erzählen könnten.</p>
+    <p>Vielleicht hast du in den Melodien etwas von mir entdeckt. Vielleicht in den Gedanken dazwischen.</p>
+    <p>Und vielleicht ist das ein schönerer Anfang, als mit einem Namen zu beginnen.</p>
+  <p>Auch außerhalb der Musik gibt es vieles, das mich bewegt. Ich bin gerne draußen in der Natur, dort, wo es ein wenig ruhiger wird, Gedanken ihren Weg finden und die kleinen Dinge wieder mehr Aufmerksamkeit bekommen.</p>
+  <p>Genauso gerne verliere ich mich in Gesprächen mit Menschen – in Gedanken, die man miteinander teilt, in Geschichten, die man vielleicht nicht erwartet hätte, und in Begegnungen, die noch ein bisschen nachklingen, wenn man längst wieder zu Hause ist.</p>
+  <p>Ich glaube, es sind oft genau diese Dinge, die das Leben besonders machen: Musik, Natur, ehrliche Gespräche und die kleinen schönen Momente, die manchmal ganz nebenbei entstehen. Und vielleicht auch der Raum, den wir ihnen geben, damit sie einfach da sein dürfen.</p>
+  <p class="hand" style="font-size:var(--t-head);margin-top:12px">Schön, dass du da bist,<br>und danke fürs Zuhören!</p>
+  <p class="hand" style="font-size:var(--t-head);margin-top:18px">Pascal :)</p>
+</div></section>
+</main>
+
+<footer class="band green"><div class="center">
+  <p>Mit der Zeit wird sich dieser Ort verändern. Vielleicht kommen neue Stücke dazu, vielleicht Worte, vielleicht etwas, das ich heute noch gar nicht kenne.</p>
+  <a class="btn" href="#start">Zurück nach oben</a>
+</div></footer>
+
+<script>
+// Gedanken durchblättern – läuft von selbst weiter und fängt nach der letzten Seite wieder vorn an
+(function(){
+  const box=document.getElementById('slides'),wrap=box.closest('.slider'),prev=document.getElementById('prev'),next=document.getElementById('next'),count=document.getElementById('count'),n=box.children.length;
+  const at=()=>Math.round(box.scrollLeft/box.clientWidth);
+  function show(){const i=at();count.textContent=(i+1)+' / '+n;prev.disabled=i===0;}
+  const go=i=>box.scrollTo({left:((i%n)+n)%n*box.clientWidth});
+  // Zeit pro Seite: 5 Sekunden plus Lesezeit, je nach Textlänge zwischen 6 und 13 Sekunden
+  const time=i=>{const words=box.children[i].textContent.trim().split(/\s+/).length;return Math.min(13000,Math.max(6000,5000+words*260));};
+  let timer=null,visible=false,held=false;
+  const still=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function plan(){clearTimeout(timer);if(still||!visible||held)return;timer=setTimeout(()=>{go(at()+1);},time(at()));}
+  prev.addEventListener('click',()=>go(at()-1));next.addEventListener('click',()=>go(at()+1));
+  box.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(at()+1);if(e.key==='ArrowLeft')go(at()-1);});
+  let t;box.addEventListener('scroll',()=>{show();clearTimeout(t);t=setTimeout(plan,200);},{passive:true});
+  // anhalten, solange jemand mit Maus, Finger oder Tastatur dabei ist
+  const hold=v=>()=>{held=v;plan();};
+  wrap.addEventListener('mouseenter',hold(true));wrap.addEventListener('mouseleave',hold(false));
+  wrap.addEventListener('focusin',hold(true));wrap.addEventListener('focusout',hold(false));
+  wrap.addEventListener('touchstart',hold(true),{passive:true});wrap.addEventListener('touchend',()=>setTimeout(hold(false),4000),{passive:true});
+  if('IntersectionObserver' in window)new IntersectionObserver(es=>{visible=es[0].isIntersecting;plan();},{threshold:.4}).observe(wrap);else visible=true;
+  show();plan();
+})();
+const PLAY='<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>',PAUSE='<svg viewBox="0 0 24 24"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>';
+// Abspielen, Pausieren und Verstellen der Leiste.
+// data-start: ab welcher Sekunde das Stück beginnt (z. B. data-start="13.6"); die Leiste zählt ab dort.
+const players=new Map();let cur=null;
+function player(btn){
+  if(players.has(btn))return players.get(btn);
+  const box=btn.closest('.track'),msg=box.querySelector('.msg'),dot=box.querySelector('.prog i');
+  const start=parseFloat(btn.dataset.start)||0;
+  const a=new Audio(btn.dataset.audio);a.preload='metadata';
+  const p={a,btn,msg,dot,start,ready:false,dragging:false};
+  const len=()=>a.duration-start;
+  p.len=len;
+  a.addEventListener('loadedmetadata',()=>{p.ready=true;if(a.currentTime<start&&a.duration>start)a.currentTime=start;});
+  a.addEventListener('timeupdate',()=>{if(!p.dragging&&a.duration>start)dot.style.left=(Math.max(0,a.currentTime-start)/len()*100)+'%';});
+  a.addEventListener('pause',()=>{btn.innerHTML=PLAY;});
+  a.addEventListener('play',()=>{btn.innerHTML=PAUSE;});
+  a.addEventListener('ended',()=>{btn.innerHTML=PLAY;a.currentTime=start;dot.style.left='0';});
+  a.addEventListener('error',()=>{msg.textContent='Die Aufnahme kommt noch.';});
+  players.set(btn,p);return p;
+}
+document.querySelectorAll('[data-audio]').forEach(btn=>btn.addEventListener('click',()=>{
+  const p=player(btn);
+  if(!p.a.paused){p.a.pause();return;}
+  if(cur&&cur!==p)cur.a.pause();
+  cur=p;p.msg.textContent='';
+  p.a.play().catch(()=>{p.msg.textContent='Die Aufnahme kommt noch.';});
+}));
+// Leiste anklicken oder ziehen, um im Stück zu springen
+document.querySelectorAll('.track .prog').forEach(bar=>{
+  const btn=bar.closest('.track').querySelector('[data-audio]');if(!btn)return;
+  bar.setAttribute('role','slider');bar.setAttribute('aria-label','Stelle im Stück');bar.tabIndex=0;
+  const frac=e=>{const r=bar.getBoundingClientRect();return Math.min(1,Math.max(0,(e.clientX-r.left)/r.width));};
+  function seek(f){
+    const p=player(btn);p.dot.style.left=(f*100)+'%';
+    const go=()=>{p.a.currentTime=p.start+f*p.len();};
+    if(p.ready)go();else p.a.addEventListener('loadedmetadata',go,{once:true});
+  }
+  bar.addEventListener('pointerdown',e=>{const p=player(btn);p.dragging=true;bar.setPointerCapture(e.pointerId);p.dot.style.left=(frac(e)*100)+'%';});
+  bar.addEventListener('pointermove',e=>{const p=players.get(btn);if(p&&p.dragging)p.dot.style.left=(frac(e)*100)+'%';});
+  const end=e=>{const p=players.get(btn);if(!p||!p.dragging)return;p.dragging=false;seek(frac(e));};
+  bar.addEventListener('pointerup',end);bar.addEventListener('pointercancel',end);
+  bar.addEventListener('keydown',e=>{
+    if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;e.preventDefault();
+    const p=player(btn);if(!p.ready)return;
+    p.a.currentTime=Math.min(p.a.duration,Math.max(p.start,p.a.currentTime+(e.key==='ArrowRight'?5:-5)));
+    p.dot.style.left=((p.a.currentTime-p.start)/p.len()*100)+'%';
+  });
+});
+</script>
+<script>
+// Gefällt mir und Kommentare zu jedem Stück.
+// Vorerst nur im Browser des Besuchers gespeichert; für alle sichtbar wird es erst mit einem Dienst dahinter.
+(function(){
+  const HEART='<svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-9.6A3.9 3.9 0 0 1 12 8a3.9 3.9 0 0 1 7 2.4C19 15.6 12 20 12 20z"/></svg>';
+  const TALK='<svg viewBox="0 0 24 24"><path d="M5 6h14v10H10l-4 3v-3H5z"/></svg>';
+  const load=k=>{try{return JSON.parse(localStorage.getItem(k))||{}}catch(e){return {}}};
+  const save=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+  document.querySelectorAll('.block.track').forEach((box,i)=>{
+    const key='zdt-stueck-'+(i+1),st=Object.assign({liked:false,comments:[]},load(key));
+    const fb=document.createElement('div');fb.className='fb';
+    fb.innerHTML='<button type="button" class="like"></button><button type="button" class="talk"></button>'+
+      '<div class="cm" hidden><ul></ul><form><input type="text" id="kommentar-'+(i+1)+'" maxlength="300" placeholder="Ein paar Worte dazu …" aria-label="Kommentar schreiben"><button type="submit">Senden</button></form></div>';
+    const like=fb.querySelector('.like'),talk=fb.querySelector('.talk'),cm=fb.querySelector('.cm'),ul=fb.querySelector('ul'),form=fb.querySelector('form'),input=fb.querySelector('input');
+    function draw(){
+      like.innerHTML=HEART+'<span>'+(st.liked?'Gefällt dir':'Gefällt mir')+'</span>';
+      like.classList.toggle('liked',st.liked);like.setAttribute('aria-pressed',st.liked);
+      const n=st.comments.length;
+      talk.innerHTML=TALK+'<span>'+(n===0?'Kommentieren':n===1?'1 Kommentar':n+' Kommentare')+'</span>';
+      ul.textContent='';st.comments.forEach(c=>{const li=document.createElement('li');li.textContent=c;ul.appendChild(li);});
+    }
+    like.addEventListener('click',()=>{st.liked=!st.liked;save(key,st);draw();});
+    talk.addEventListener('click',()=>{cm.hidden=!cm.hidden;if(!cm.hidden)input.focus();});
+    form.addEventListener('submit',e=>{e.preventDefault();const t=input.value.trim();if(!t)return;st.comments.push(t);input.value='';save(key,st);draw();});
+    draw();box.querySelector('.col').appendChild(fb);
+  });
+})();
+</script>
+<script>
+// Einblenden beim Scrollen. Ohne Skript oder bei reduzierter Bewegung bleibt alles einfach sichtbar.
+(function(){
+  if(!('IntersectionObserver' in window)||window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const items=[];
+  const add=(el,dir)=>{if(el){el.classList.add('rv',dir);items.push(el);}};
+  document.querySelectorAll('.band .center, .slider').forEach(el=>add(el,'u'));
+  document.querySelectorAll('.doodle').forEach(el=>add(el,el.classList.contains('d2')?'r':'l'));
+  document.querySelectorAll('.block').forEach(b=>{
+    const flip=b.classList.contains('flip');
+    add(b.querySelector('.print'),flip?'r':'l');
+    add(b.querySelector('.col'),flip?'l':'r');
+  });
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}}),{threshold:.15,rootMargin:'0px 0px -8% 0px'});
+  items.forEach(el=>io.observe(el));
+})();
+</script>
+</body>
+</html>
